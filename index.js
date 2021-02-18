@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+require('dotenv').config()
 const cors = require('cors')
 //allows access from all origins
 app.use(cors())
@@ -8,7 +9,7 @@ app.use(express.json())
 
 //bodyparser middleware
 app.use(express.urlencoded({extended: false}))
-
+//controller middleware
 app.use('/api', require('./controllers/users'))
 
 app.listen(process.env.PORT || 8000, ()=>{
