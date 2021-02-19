@@ -5,6 +5,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const router = express.Router()
+const jwt = require('jsonwebtoken')
 
 const options = {
     secretOrKey: process.env.JWT_SECRET,
@@ -28,7 +29,7 @@ passport.use(strategy)
 passport.initialize()
 
 //we will export this and use it in the login route to create a token each time a user logs in or signs up
-const createUserToken = (req, res) => {
+const createUserToken = (req, user) => {
     //first we check the password using bcrypt
     const validPassword = req.body.password ?
     bcrypt.compareSync(req.body.password, user.password) : false
@@ -38,7 +39,7 @@ const createUserToken = (req, res) => {
    // }else {
        //validPassword = false
    //}
-   if(!user || !validPassword) { // if there was an issue with email/password
+   if(!User || !validPassword) { // if there was an issue with email/password
        const err = new Error('The provided email OR password in incorrect')
        err.statusCode = 422
        throw err
