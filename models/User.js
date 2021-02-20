@@ -12,7 +12,7 @@ const options = {
 }
 
 const userSchema = new mongoose.Schema({
-    motto: String,
+    name: String,
     email: {
         type: String,
         required: true,
@@ -22,6 +22,16 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    age: Number,
+    location: String,
+    about: String,
+    following: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
+    followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
+    posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
+    photo: {
+        data: Buffer,
+        contentType: String
+      }
 }, options)
 
 module.exports = mongoose.model('User', userSchema)
