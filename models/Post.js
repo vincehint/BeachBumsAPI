@@ -11,6 +11,15 @@ const options = {
     },
 }
 
+const commentSchema = new mongoose.Schema({
+    content: String,
+    author: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
+    created: {
+        type: Date,
+        default: Date.now
+    }
+})
+
 const postSchema = new mongoose.Schema({
     content: {
         type: String,
@@ -22,14 +31,7 @@ const postSchema = new mongoose.Schema({
     },
     likes: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
     author: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
-    comments: [{
-        content: String,
-        author: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
-        created: {
-            type: Date,
-            default: Date.now
-        }
-    }]
+    comments: [commentSchema]
 }, options)
 
 module.exports = mongoose.model('Post', postSchema)
