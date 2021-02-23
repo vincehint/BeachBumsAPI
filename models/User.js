@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    age: Number,
+    birthdate: String,
     location: String,
     about: String,
     following: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
