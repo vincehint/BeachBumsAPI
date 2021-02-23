@@ -47,10 +47,18 @@ const createUserToken = (req, user) => {
        const payload = {
            id: user._id,
            email: user.email,
-           motto: user.motto
+           password: user.password,
+           birthdate: user.birthdate,
+           location: user.location,
+           about: user.about,
+           following: user.following,
+           followers: user.followers,
+           photo: user.photo
        }
        return jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: 3600})
    }
 }
 
 module.exports = { createUserToken }
+
+
