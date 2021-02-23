@@ -11,6 +11,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 //controller middleware
 app.use('/api', require('./controllers/users'))
+app.use('/post', require('./controllers/post'))
 
 app.listen(process.env.PORT || 8000, ()=>{
     console.log('Yo! We got a connection here!')

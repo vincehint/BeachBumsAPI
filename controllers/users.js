@@ -24,6 +24,11 @@ router.post('/signup', (req, res) => {
     .then(token => res.status(201).json({token}))
     .catch(err => console.log('ERROR CREATING USER', err))
 })
+
+
+
+
+
 //Private
 //GET /api/private
 router.get('/private', passport.authenticate('jwt', {session: false}), (req, res)=> {
