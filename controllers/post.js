@@ -17,10 +17,13 @@ router.post('/post', (req, res) => {
     })
 
 router.put('/post/:id', (req, res) => {
-   Post.findByIdAndUpdate( req.params.id, {$push: {comments: req.body.content, comment: req.body.content, author: req.body.author}
-   }, req.body, {
-       new: true
-   })
+   Post.findByIdAndUpdate(req.params.id, 
+    {$push: {
+        comments: req.body.content,
+        author: req.body.author}
+    }, req.body, {
+         new: true
+    })
    .then(createComment => {
         res.status(200).send(createComment)
    })
@@ -29,6 +32,8 @@ router.put('/post/:id', (req, res) => {
        res.status(503).send({ message: 'Server Error'})
    })
 })
+
+
 
 router.delete('/post/:id', (req, res) => {
     Post.findByIdAndDelete(req.params.id)
@@ -40,6 +45,7 @@ router.delete('/post/:id', (req, res) => {
         res.status(503).send( {message: 'Server-side error' })
     })
 })
+
 
 
 
