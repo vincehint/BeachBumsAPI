@@ -12,7 +12,7 @@ const options = {
 }
 
 const userSchema = new mongoose.Schema({
-    name: String,
+    username: String,
     email: {
         type: String,
         required: true,
