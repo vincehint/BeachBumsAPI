@@ -56,7 +56,16 @@ router.delete('/:id', (req, res)=> {
     .catch(err=>console.log('ERROR IN Delete Account', err))
 })
 
-router.get('/')
+router.get('/users',(req,res)=>{
+    User.find({})
+    .then((allUsers) => {
+        console.log(allUsers)
+        res.status(200).send({ message: 'Get all users' })
+    })
+    .catch(err => {
+        res.status(503).send( {message: 'Server-side error' })
+    })
+})
 
 //Private
 //GET /api/private
