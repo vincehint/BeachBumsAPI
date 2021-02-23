@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const User = require('../models/User')
+const User = require('../models/Post')
 const bcrypt = require('bcrypt')
 const { createUserToken } = require('../middleware/auth')
 const passport = require("passport")
@@ -11,8 +11,9 @@ router.post('/post', (req, res) => {
         photo: req.body.photo,
         author: req.body.author
     })
-    .then(createdPost=> createPostToken(req, createdPost))
-    .then(token => res.status(201).json({token}))
+    .then(createdPost=> {
+        console.log(createdPost)
+    })
     .catch(err => console.log('ERROR CREATING POST', err))
     })
 

@@ -56,6 +56,8 @@ router.delete('/:id', (req, res)=> {
     .catch(err=>console.log('ERROR IN Delete Account', err))
 })
 
+router.get('/')
+
 //Private
 //GET /api/private
 router.get('/private', passport.authenticate('jwt', {session: false}), (req, res)=> {
