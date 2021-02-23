@@ -17,17 +17,14 @@ router.post('/signup', (req, res) => {
     .then(hash=>({
         email: req.body.email,
         password: hash,
-        motto: req.body.motto
+        username: req.body.username,
+        birthdate: req.body.birthdate
     }))
     .then(hashedUser=>User.create(hashedUser))
     .then(createdUser=> createUserToken(req, createdUser))
     .then(token => res.status(201).json({token}))
     .catch(err => console.log('ERROR CREATING USER', err))
 })
-
-
-
-
 
 //Private
 //GET /api/private
@@ -36,3 +33,8 @@ router.get('/private', passport.authenticate('jwt', {session: false}), (req, res
 })
 
 module.exports = router
+
+
+
+
+  
