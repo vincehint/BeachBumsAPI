@@ -1,22 +1,25 @@
 const express = require('express')
 const router = express.Router()
-const User = require('../models/User')
+const Post = require('../models/Post')
 const bcrypt = require('bcrypt')
-const { createUserToken } = require('../middleware/auth')
+const { createPostToken } = require('../middleware/auth')
 const passport = require("passport")
 
-router.post('/post', (req, res) => {
+router.post('/new', (req, res) => {
     Post.create({
         content: req.body.content,
         photo: req.body.photo,
         author: req.body.author
     })
-    .then(createdPost=> createPostToken(req, createdPost))
-    .then(token => res.status(201).json({token}))
+    .then(createdPost=> {
+        console.log(createdPost)
+        res.send('Success')
+    })
+
     .catch(err => console.log('ERROR CREATING POST', err))
     })
 
-router.put('/post/:id', (req, res) => {
+router.put('/:id', (req, res) => {
    Post.findByIdAndUpdate(req.params.id, 
     {$push: {
         comments: req.body.content,
@@ -35,7 +38,7 @@ router.put('/post/:id', (req, res) => {
 
 
 
-router.delete('/post/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     Post.findByIdAndDelete(req.params.id)
     .then(() => {
         res.status(200).send({ message: 'Deleted Post' })
