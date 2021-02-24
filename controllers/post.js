@@ -21,6 +21,7 @@ router.post('/new/:id', (req, res) => {
         author: req.body.author
     })
     .then(createdPost=> {
+        
         console.log(createdPost)
         User.findById(req.params.id).then((user) => {
             user.posts.push(createdPost)
