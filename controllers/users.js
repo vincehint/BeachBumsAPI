@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt')
 const { createUserToken } = require('../middleware/auth')
 const passport = require("passport")
 
+
 router.post('/login', (req, res)=> {
     User.findOne({email: req.body.email})
     .then(foundUser=>createUserToken(req, foundUser))
@@ -27,32 +28,69 @@ router.post('/signup', (req, res) => {
     .catch(err => console.log('ERROR CREATING USER', err))
 })
 
+
 router.post('/profile/edit', (req, res)=> {
-    bcrypt.hash(req.body.password, 10)
-    .then(hash=>({
-        username: req.body.username,
-        email: req.body.email,
-        password: hash,
-        birthdate: req.body.birthdate,
-        location: req.body.location,
-        about: req.body.about,
-        photo: req.body.photo
-    }))
-    .then(hashedUser =>{
-        console.log(hashedUser)
-        User.findOneAndUpdate({_id: req.body.id},hashedUser,{new:true})
+    console.log('entrou update')
+    if (req.body.password.length<20){
+
+        bcrypt.hash(req.body.password, 10)
+        .then(hash =>({
+            username: req.body.username,
+            email: req.body.email,
+            password: hash,
+            birthdate: req.body.birthdate,
+            location: req.body.location,
+            about: req.body.about,
+            photo: req.body.photo
+        }))
+        .then(hashedUser =>{
+            console.log(hashedUser)
+            console.log(hashedUser.password)
+            User.findOneAndUpdate({_id: req.body.id},hashedUser,{new:true})
+            .then(foundUser=> {
+                console.log(foundUser)
+                createUserToken(req, foundUser)
+            })
+            .then(token => res.json({token}))
+            .catch(err=>console.log('ERROR IN EDIT PROFILE', err))
+        })
+
+    }else{
+        User.findOneAndUpdate({_id: req.body.id},{
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+            birthdate: req.body.birthdate,
+            location: req.body.location,
+            about: req.body.about,
+            photo: req.body.photo
+        },{new:true})
         .then(foundUser=> {
             console.log(foundUser)
             createUserToken(req, foundUser)
         })
         .then(token => res.json({token}))
+        .catch(err=>console.log('ERROR IN EDIT PROFILE', err))
+    }
+})
+
+
+
+router.get('/users/:id', (req,res)=>{
+    console.log(req.params.id)
+    User.find({_id:{$ne:req.params.id}})
+    .then(foundUsers=>{
+        // console.log(foundUsers)
+        res.status(200).send({ message: 'Others Users selected' })
     })
-    .catch(err=>console.log('ERROR IN EDIT PROFILE', err))
+    .catch(err=>console.log('Error in Getting all users', err))
 })
 
 router.delete('/:id', (req, res)=> {
-    console.log('entrou')
     User.deleteOne({_id: req.params.id})
+    .then(()=>{
+        res.status(200).send({ message: 'Deleted User' })
+    })
     .catch(err=>console.log('ERROR IN Delete Account', err))
 })
 
@@ -62,9 +100,5 @@ router.get('/private', passport.authenticate('jwt', {session: false}), (req, res
     return res.json({"message": "Thou hath been granted permission to access this route!"})
 })
 
+
 module.exports = router
-
-
-
-
-  
