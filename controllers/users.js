@@ -17,10 +17,7 @@ router.post('/signup', (req, res) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash=>({
         email: req.body.email,
-        password: hash,
-        username: req.body.username,
-        birthdate: req.body.birthdate,
-        photo: req.body.photo
+        password: hash
     }))
     .then(hashedUser=>User.create(hashedUser))
     .then(createdUser=> createUserToken(req, createdUser))

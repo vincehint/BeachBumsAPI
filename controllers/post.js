@@ -21,6 +21,7 @@ router.post('/new', (req, res) => {
         author: req.body.author
     })
     .then(createdPost=> {
+        
         console.log(createdPost)
         res.send('Success')
     })
