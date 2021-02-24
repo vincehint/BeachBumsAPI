@@ -6,20 +6,35 @@ const bcrypt = require('bcrypt')
 const { createPostToken } = require('../middleware/auth')
 const passport = require("passport")
 
-router.post('/new', (req, res) => {
-   let create = Post.create({
+router.get('/author/:id',(req,res)=>{
+    Post.find({author:req.params.id})
+    .then(postIDs=> {
+        console.log(postIDs)
+        res.send('Success')
+    })
+})
+
+router.post('/new/:id', (req, res) => {
+    Post.create({
         content: req.body.content,
         photo: req.body.photo,
         author: req.body.author
     })
     .then(createdPost=> {
         console.log(createdPost)
-        User.findOneAndUpdate(createdPost)
-        res.send('Success')
+        User.findById(req.params.id).then((user) => {
+            user.posts.push(createdPost)
+                user.save().then(() => {
+                    res.send('Success') 
+            })
+        })
     })
 
     .catch(err => console.log('ERROR CREATING POST', err))
     })
+
+
+
 
 router.get('/hello', (req, res) => {
     Post.find({})
