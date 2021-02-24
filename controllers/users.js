@@ -28,47 +28,28 @@ router.post('/signup', (req, res) => {
 
 router.post('/profile/edit', (req, res)=> {
     console.log('entrou update')
-    if (req.body.password.length<20){
-
-        bcrypt.hash(req.body.password, 10)
-        .then(hash =>({
-            username: req.body.username,
-            email: req.body.email,
-            password: hash,
-            birthdate: req.body.birthdate,
-            location: req.body.location,
-            about: req.body.about,
-            photo: req.body.photo
-        }))
-        .then(hashedUser =>{
-            console.log(hashedUser)
-            console.log(hashedUser.password)
-            User.findOneAndUpdate({_id: req.body.id},hashedUser,{new:true})
-            .then(foundUser=> {
-                console.log(foundUser)
-                createUserToken(req, foundUser)
-            })
-            .then(token => res.json({token}))
-            .catch(err=>console.log('ERROR IN EDIT PROFILE', err))
-        })
-
-    }else{
-        User.findOneAndUpdate({_id: req.body.id},{
-            username: req.body.username,
-            email: req.body.email,
-            password: req.body.password,
-            birthdate: req.body.birthdate,
-            location: req.body.location,
-            about: req.body.about,
-            photo: req.body.photo
-        },{new:true})
+    bcrypt.hash(req.body.password, 10)
+    .then(hash =>({
+        username: req.body.username,
+        email: req.body.email,
+        password: hash,
+        birthdate: req.body.birthdate,
+        location: req.body.location,
+        about: req.body.about,
+        photo: req.body.photo
+    }))
+    .then(hashedUser =>{
+        console.log(hashedUser)
+        console.log(hashedUser.password)
+        User.findOneAndUpdate({_id: req.body.id},hashedUser,{new:true})
         .then(foundUser=> {
             console.log(foundUser)
             createUserToken(req, foundUser)
         })
         .then(token => res.json({token}))
-        .catch(err=>console.log('ERROR IN EDIT PROFILE', err))
-    }
+    })
+    .catch(err=>console.log('ERROR IN EDIT PROFILE', err))
+  
 })
 
 
@@ -77,18 +58,23 @@ router.get('/users/:id', (req,res)=>{
     console.log(req.params.id)
     User.find({_id:{$ne:req.params.id}})
     .then(foundUsers=>{
-        // console.log(foundUsers)
-        res.status(200).send({ message: 'Others Users selected' })
+        console.log(foundUsers)
+        res.json(foundUsers)
+        // res.status(200).send({ message: 'Others Users selected' })
     })
     .catch(err=>console.log('Error in Getting all users', err))
 })
 
-router.delete('/:id', (req, res)=> {
-    User.deleteOne({_id: req.params.id})
-    .then(()=>{
+
+router.delete('/:id', (req, res) => {
+    User.findByIdAndDelete(req.params.id)
+    .then(() => {
         res.status(200).send({ message: 'Deleted User' })
     })
-    .catch(err=>console.log('ERROR IN Delete Account', err))
+    .catch(err => {
+        console.log(`Error when deleting user: ${err}`)
+        res.status(503).send( {message: 'Server-side error' })
+    })
 })
 
 //Private

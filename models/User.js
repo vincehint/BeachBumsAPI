@@ -28,10 +28,7 @@ const userSchema = new mongoose.Schema({
     following: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
     followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
     posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
-    photo: {
-        data: Buffer,
-        contentType: String
-      }
+    photo: String
 }, options)
 
 module.exports = mongoose.model('User', userSchema)
