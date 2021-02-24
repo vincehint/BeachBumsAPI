@@ -19,22 +19,54 @@ router.post('/new', (req, res) => {
     .catch(err => console.log('ERROR CREATING POST', err))
     })
 
-router.put('/:id', (req, res) => {
-   Post.findByIdAndUpdate(req.params.id, 
-    {$push: {
-        comments: req.body.content,
-        author: req.body.author}
-    }, req.body, {
-         new: true
+router.get('/hello', (req, res) => {
+    Post.find({})
+    .then(posts => {
+        res.send(posts)
     })
-   .then(createComment => {
-        res.status(200).send(createComment)
-   })
-   .catch(err => {
-       console.log(`error when creating comment: ${err}`)
-       res.status(503).send({ message: 'Server Error'})
-   })
 })
+
+router.get('/hello/:id', (req, res) => {
+    Post.find({_id: req.params.id})
+    .then(posts => {
+        console.log(posts)
+        res.send(posts)
+    })
+})
+
+router.put('/:id', (req, res) => {
+    console.log(req.params.id)
+    Post.findByIdAndUpdate(req.params.id, req.body, {upsert: true})
+    .then(updatePost => {
+        updatePost = req.body
+        console.log(updatePost)
+        res.status(200).send(updatePost)
+    })
+        .catch(err => {
+            console.log(`error when creating comment: ${err}`)
+            res.status(503).send({ message: 'Server Error'})
+})
+})
+
+router.post('/:id', (req, res) => {
+    Post.findById(req.params.id)
+    .then(createdComment=> {
+        createdComment.comments.push({
+            content: req.body.content,
+            author: req.body.author
+        })
+        console.log(createdComment)
+        createdComment.save().then(() => {
+           res.send('Success') 
+        })
+        
+    })
+
+    .catch(err => console.log('ERROR CREATING COMMENT', err))
+    })
+
+
+    
 
 
 
