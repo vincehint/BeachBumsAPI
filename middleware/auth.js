@@ -43,6 +43,7 @@ const createUserToken = (req, user) => {
            id: user._id,
            email: user.email,
            password: user.password,
+           username: user.username,
            birthdate: user.birthdate,
            location: user.location,
            about: user.about,
