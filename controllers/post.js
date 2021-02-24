@@ -1,18 +1,20 @@
 const express = require('express')
 const router = express.Router()
 const Post = require('../models/Post')
+const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const { createPostToken } = require('../middleware/auth')
 const passport = require("passport")
 
 router.post('/new', (req, res) => {
-    Post.create({
+   let create = Post.create({
         content: req.body.content,
         photo: req.body.photo,
         author: req.body.author
     })
     .then(createdPost=> {
         console.log(createdPost)
+        User.findOneAndUpdate(createdPost)
         res.send('Success')
     })
 
@@ -61,14 +63,8 @@ router.post('/:id', (req, res) => {
         })
         
     })
-
     .catch(err => console.log('ERROR CREATING COMMENT', err))
     })
-
-
-    
-
-
 
 router.delete('/:id', (req, res) => {
     Post.findByIdAndDelete(req.params.id)
@@ -80,6 +76,22 @@ router.delete('/:id', (req, res) => {
         res.status(503).send( {message: 'Server-side error' })
     })
 })
+
+router.delete('/:id', (req, res) => {
+    Post.findById(req.params.id)
+        .then(deleteComment=> {
+            deleteComment.comments.pop({
+                content: req.body.content,
+                author: req.body.author
+            })
+            console.log(deleteComment)
+            deleteComment.save().then(() => {
+               res.send('DELETE COMMENT SUCCESS') 
+            })
+            
+        })
+        .catch(err => console.log('ERROR DELETING COMMENT', err))
+        })
 
 
 
