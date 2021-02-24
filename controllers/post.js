@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Post = require('../models/Post')
+const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const { createPostToken } = require('../middleware/auth')
 const passport = require("passport")
@@ -13,8 +14,7 @@ router.get('/author/:id',(req,res)=>{
     })
 })
 
-router.post('/new', (req, res) => {
-    console.log('entrou post')
+router.post('/new/:id', (req, res) => {
     Post.create({
         content: req.body.content,
         photo: req.body.photo,
@@ -22,26 +22,19 @@ router.post('/new', (req, res) => {
     })
     .then(createdPost=> {
         console.log(createdPost)
-        res.send('Success')
+        User.findById(req.params.id).then((user) => {
+            user.posts.push(createdPost)
+                user.save().then(() => {
+                    res.send('Success') 
+            })
+        })
     })
 
     .catch(err => console.log('ERROR CREATING POST', err))
     })
 
 
-// router.put('/:id', (req, res) => {
-//    Post.findByIdAndUpdate(req.params.id, 
-//     {$push: {
-//         comments: [{content: req.body.content, author: req.body.author}]
-//     }, req.body{new: true})
-//    .then(createComment => {
-//         res.status(200).send(createComment)
-//    })
-//    .catch(err => {
-//        console.log(`error when creating comment: ${err}`)
-//        res.status(503).send({ message: 'Server Error'})
-//    })
-// })
+
 
 router.get('/hello', (req, res) => {
     Post.find({})
@@ -85,15 +78,8 @@ router.post('/:id', (req, res) => {
         })
         
     })
-
     .catch(err => console.log('ERROR CREATING COMMENT', err))
     })
-
-
-    
-
-
-
 
 router.delete('/:id', (req, res) => {
     Post.findByIdAndDelete(req.params.id)
@@ -105,6 +91,22 @@ router.delete('/:id', (req, res) => {
         res.status(503).send( {message: 'Server-side error' })
     })
 })
+
+router.delete('/:id', (req, res) => {
+    Post.findById(req.params.id)
+        .then(deleteComment=> {
+            deleteComment.comments.pop({
+                content: req.body.content,
+                author: req.body.author
+            })
+            console.log(deleteComment)
+            deleteComment.save().then(() => {
+               res.send('DELETE COMMENT SUCCESS') 
+            })
+            
+        })
+        .catch(err => console.log('ERROR DELETING COMMENT', err))
+        })
 
 
 
