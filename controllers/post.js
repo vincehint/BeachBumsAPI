@@ -26,7 +26,7 @@ router.post('/new/:id', (req, res) => {
         User.findById(req.params.id).then((user) => {
             user.posts.push(createdPost)
                 user.save().then(() => {
-                    res.send('Success')
+                    res.send('Success') 
             })
         })
     })
