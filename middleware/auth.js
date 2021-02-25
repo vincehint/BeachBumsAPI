@@ -41,8 +41,10 @@ const createUserToken = (req, user) => {
    } else { //if the user and their password is legit
        const payload = {
            id: user._id,
+           username: user.username,
            email: user.email,
            password: user.password,
+           username: user.username,
            birthdate: user.birthdate,
            location: user.location,
            about: user.about,
