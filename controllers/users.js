@@ -7,7 +7,9 @@ const passport = require("passport")
 
 
 router.post('/login', (req, res)=> {
-    User.findOne({email: req.body.email}).populate('post')
+
+    User.findOne({email: req.body.email}).populate('posts')
+
     .then(foundUser=>createUserToken(req, foundUser))
     .then(token => res.json({token}))
     .catch(err=>console.log('Error Logging in', err))
@@ -54,9 +56,10 @@ router.post('/profile/edit', (req, res)=> {
 
 
 
-router.get('/users/:id', (req,res)=>{
-    console.log(req.params.id)
-    User.find({_id:{$ne:req.params.id}})
+router.get('/users', (req,res)=>{
+    // console.log(req.params.id)
+    // User.find({_id:{$ne:req.params.id}})
+    User.find({})
     .then(foundUsers=>{
         console.log(foundUsers)
         res.json(foundUsers)
