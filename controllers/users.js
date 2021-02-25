@@ -7,7 +7,9 @@ const passport = require("passport")
 
 
 router.post('/login', (req, res)=> {
+
     User.findOne({email: req.body.email}).populate('posts')
+
     .then(foundUser=>createUserToken(req, foundUser))
     .then(token => res.json({token}))
     .catch(err=>console.log('Error Logging in', err))
