@@ -93,7 +93,7 @@ router.delete('/:id', (req, res) => {
     })
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/delete/:id', (req, res) => {
     Post.findById(req.params.id)
         .then(deleteComment=> {
             deleteComment.comments.pop({
