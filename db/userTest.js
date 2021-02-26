@@ -30,6 +30,11 @@ const Post = require('../models/Post')
 //     else console.log('success!', updatedPost)
 // })
 
+console.log('oi')
+Post.deleteMany({},(err, updatedPost) => {
+    if (err) console.log('Error added test post', err)
+    else console.log('success!', updatedPost)
+})
 
 
 
