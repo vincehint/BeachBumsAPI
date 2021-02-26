@@ -92,7 +92,7 @@ router.post('/:id', (req, res) => {
     Post.findById(req.params.id)
     .then(createdComment=> {
         createdComment.comments.push({
-            content: req.body.content,
+            content: req.body.contentComment,
             author: req.body.author
         })
         console.log(createdComment)
