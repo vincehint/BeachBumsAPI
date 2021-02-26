@@ -67,6 +67,22 @@ router.get('/users', (req,res)=>{
 })
 
 
+router.post('/follow/:id1/user/:id2', (req,res)=>{
+    User.findById(req.params.id2)
+    .then((user) => {
+        User.findById(req.params.id1)
+        .then(friend =>{
+            user.following.push(friend._id)
+            user.save()
+            friend.followers.push(user._id)
+            friend.save()
+        })
+        .then(() => {
+            res.send('Success') 
+        })
+    })
+})
+
 router.delete('/:id', (req, res) => {
     User.findByIdAndDelete(req.params.id)
     .then(() => {

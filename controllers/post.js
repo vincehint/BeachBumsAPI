@@ -34,8 +34,27 @@ router.post('/new/:id', (req, res) => {
     .catch(err => console.log('ERROR CREATING POST', err))
     })
 
+// likes
+router.post('/like/:id', (req, res) => {
+    Post.findById(req.params.id)
+    .then(likePost=> {
+        likePost.likes.push(
+            req.body.author
+        )
+        console.log(likePost)
+        likePost.save().then(() => {
+           res.send('Success liking') 
+        })
+    })
+    .catch(err => console.log('ERROR LIKING POST', err))
+})
 
-
+// router.post('/like/:id', (req, res) => {
+//     let id = req.body.id;
+//     let query = {_id: id};
+//     let post = Post.findOne(query);
+//     Post.findOneAndUpdate(query, {$inc : {'post.likes' : 1}}).exec(post);
+// })
 
 router.get('/hello', (req, res) => {
     Post.find({})
@@ -45,7 +64,7 @@ router.get('/hello', (req, res) => {
 })
 
 router.get('/hello/:id', (req, res) => {
-    Post.find({_id: req.params.id})
+    Post.find({_id: req.params.id}).populate('author')
     .then(posts => {
         console.log(posts)
         res.send(posts)
