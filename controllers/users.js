@@ -52,6 +52,26 @@ router.post('/profile/edit', (req, res)=> {
   
 })
 
+router.post('/password/edit', (req, res)=> {
+    console.log('entrou update')
+    bcrypt.hash(req.body.password, 10)
+    .then(hash =>({
+        password: hash
+    }))
+    .then(hashedUser =>{
+        console.log(hashedUser)
+        console.log(hashedUser.password)
+        User.findOneAndUpdate({_id: req.body.id},hashedUser,{new:true})
+        .then(foundUser=> {
+            console.log(foundUser)
+            createUserToken(req, foundUser)
+        })
+        .then(token => res.json({token}))
+    })
+    .catch(err=>console.log('ERROR IN EDIT PASSWORD', err))
+  
+})
+
 
 
 router.get('/users', (req,res)=>{
@@ -83,6 +103,23 @@ router.post('/follow/:id1/user/:id2', (req,res)=>{
     })
 })
 
+router.post('/unfollow/:id1/user/:id2', (req,res)=>{
+    console.log('unfollow')
+    User.findById(req.params.id2)
+    .then((user) => {
+        User.findById(req.params.id1)
+        .then(friend =>{
+            user.following.pull(friend._id)
+            user.save()
+            friend.followers.pull(user._id)
+            friend.save()
+        })
+        .then(() => {
+            res.send('Success') 
+        })
+    })
+})
+
 router.delete('/:id', (req, res) => {
     User.findByIdAndDelete(req.params.id)
     .then(() => {
@@ -90,6 +127,18 @@ router.delete('/:id', (req, res) => {
     })
     .catch(err => {
         console.log(`Error when deleting user: ${err}`)
+        res.status(503).send( {message: 'Server-side error' })
+    })
+})
+
+router.delete('/users', (req, res) => {
+    console.log('entrou delete')
+    User.remove({})
+    .then(() => {
+        res.status(200).send({ message: 'Deleted All Users' })
+    })
+    .catch(err => {
+        console.log(`Error when deleting users: ${err}`)
         res.status(503).send( {message: 'Server-side error' })
     })
 })
