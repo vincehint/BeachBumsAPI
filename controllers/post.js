@@ -38,7 +38,7 @@ router.post('/new/:id', (req, res) => {
 
 
 router.get('/hello', (req, res) => {
-    Post.find({})
+    Post.find({}).populate('author')
     .then(posts => {
         res.send(posts)
     })
