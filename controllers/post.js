@@ -49,6 +49,20 @@ router.post('/like/:id', (req, res) => {
     .catch(err => console.log('ERROR LIKING POST', err))
 })
 
+router.put('/unlike/:id', (req, res) => {
+    Post.findByIdAndUpdate(req.params.id)
+    .then(unlikePost=> {
+        unlikePost.likes.pull(
+            req.body.author
+        )
+        console.log(unlikePost)
+        unlikePost.save().then(() => {
+           res.send('Success unliking') 
+        })
+    })
+    .catch(err => console.log('ERROR LIKING POST', err))
+})
+
 // router.post('/like/:id', (req, res) => {
 //     let id = req.body.id;
 //     let query = {_id: id};
@@ -57,7 +71,7 @@ router.post('/like/:id', (req, res) => {
 // })
 
 router.get('/hello', (req, res) => {
-    Post.find({})
+    Post.find({}).populate('author')
     .then(posts => {
         res.send(posts)
     })
