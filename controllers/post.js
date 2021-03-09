@@ -5,7 +5,6 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const { createPostToken } = require('../middleware/auth')
 const passport = require("passport")
-
 router.get('/author/:id',(req,res)=>{
     Post.find({author:req.params.id})
     .then(postIDs=> {
@@ -13,7 +12,6 @@ router.get('/author/:id',(req,res)=>{
         res.send('Success')
     })
 })
-
 router.post('/new/:id', (req, res) => {
     Post.create({
         content: req.body.content,
@@ -21,7 +19,6 @@ router.post('/new/:id', (req, res) => {
         author: req.body.author
     })
     .then(createdPost=> {
-        
         console.log(createdPost)
         User.findById(req.params.id).then((user) => {
             user.posts.push(createdPost)
@@ -30,7 +27,6 @@ router.post('/new/:id', (req, res) => {
             })
         })
     })
-
     .catch(err => console.log('ERROR CREATING POST', err))
     })
 
@@ -76,7 +72,6 @@ router.get('/hello', (req, res) => {
         res.send(posts)
     })
 })
-
 router.get('/hello/:id', (req, res) => {
     Post.find({_id: req.params.id}).populate('author')
     .then(posts => {
@@ -84,7 +79,6 @@ router.get('/hello/:id', (req, res) => {
         res.send(posts)
     })
 })
-
 router.put('/:id', (req, res) => {
     console.log(req.params.id)
     Post.findByIdAndUpdate(req.params.id, req.body, {upsert: true})
@@ -98,23 +92,20 @@ router.put('/:id', (req, res) => {
             res.status(503).send({ message: 'Server Error'})
 })
 })
-
 router.post('/:id', (req, res) => {
     Post.findById(req.params.id)
     .then(createdComment=> {
         createdComment.comments.push({
-            content: req.body.content,
+            content: req.body.contentComment,
             author: req.body.author
         })
         console.log(createdComment)
         createdComment.save().then(() => {
            res.send('Success') 
         })
-        
     })
     .catch(err => console.log('ERROR CREATING COMMENT', err))
     })
-
 router.delete('/:id', (req, res) => {
     Post.findByIdAndDelete(req.params.id)
     .then(() => {
@@ -125,7 +116,6 @@ router.delete('/:id', (req, res) => {
         res.status(503).send( {message: 'Server-side error' })
     })
 })
-
 router.delete('/delete/:id', (req, res) => {
     Post.findById(req.params.id)
         .then(deleteComment=> {
@@ -137,13 +127,7 @@ router.delete('/delete/:id', (req, res) => {
             deleteComment.save().then(() => {
                res.send('DELETE COMMENT SUCCESS') 
             })
-            
         })
         .catch(err => console.log('ERROR DELETING COMMENT', err))
         })
-
-
-
-
-
 module.exports = router
